@@ -1,18 +1,14 @@
 let term = require('terminal-kit').terminal;
 
-let word_inventory = ["lackey","eyolk",'termites']
+let word_inventory = ["^keep","ykolk"]
 let chosen_words = []
-let correct_words = []
+
 
 
 let goal_word = "key"
-let goal_array = goal_word.split('');
-term("\n"+goal_array)
-term('\n')
+
 
 term("You inventory has the words: ^+" + word_inventory + "\n")
-
-
 
 function terminate() {
 	term.grabInput( false ) ;
@@ -26,8 +22,6 @@ for(let i = 0; i < word_inventory.length; i++){
 
 term.grabInput();
 let idx_array = [];
-let counter = 0;
-let done_letters = []
 
 term.on( 'key' , function( name , matches , data ) {
 	if(data.isCharacter){
@@ -41,47 +35,95 @@ term.on( 'key' , function( name , matches , data ) {
 				chosen_words.push(word_inventory[idx])	
 			}
 		});
+		let [correct_words, wordMade, ifSame] = checkIftheWordsMakeWord(chosen_words,goal_word)
 
-		//Should order of the word arranged matter? - YES
-		chosen_words.forEach((val, chosen_idx)=>{
-			// goal_array.forEach((goal_val)=>{
-			// 	let val_idx = val.indexOf(goal_val)
-			// 	let isCaret = val_idx - 1 == val.indexOf('^') && val_idx > 0 ? true : false;
-			// 	if(val.includes(goal_val) && !isCaret && !done_letters.includes(goal_val)){
-			// 		if(val_idx == 0){
-			// 			val=`^y${val.slice(0,val_idx + 1)}^:${val.slice(val_idx+1)}`
-			// 		}else{
-			// 			val = `${val.slice(0,val_idx)}^y${val.slice(val_idx, val_idx+1)}^:${val.slice(val_idx+1)}`
-			// 		}
-			// 		done_letters.push(goal_val) //Problem about this method is repetition of letters in the goal word will not be detected
-			// 	}
-			// })
-			// if(val.includes('^y')){
-			// 	correct_words.push(val);
-			// }
-			val.split('').forEach((letter,val_idx)=>{
-				let isInGoal = goal_array.includes(letter); 
-				if(isInGoal){
-					counter++ // Debugging
-					done_letters.push(letter)
-				}
-			})
-			let equalLength = done_letters.length == goal_array.length
-			let equalOrder = done_letters.every()
-			if(counter >= goal_array.length){
-				correct_words.push(val)
-			}
-		})
-
-		if(counter >= goal_array.length){
-			console.log(done_letters)
-			term("\n It is correct: "+correct_words+"\n")
+		term("\nThe word you made with the chosen words: " + wordMade)
+		if(ifSame){
+			term("\nThe word you made is the correct word:" + ifSame)
 			terminate()
 		}else{
-			console.log(done_letters)
+			term("\nThe word you made is not the correct word:" + !ifSame)
+			terminate()
 		}
-
-
+		term("\nThe words you used to make it: "+ chosen_words)
+		term("\nThe words that had the correct letter: "+ correct_words)
 	}
 	if ( name === 'CTRL_C' ) { terminate() ; }
 } ) ;
+
+function checkIftheWordsMakeWord(chosen_words, goal_word){
+	let correct_words = []
+	let done_letters = []
+	let goal_array = goal_word.split('');
+	let wordMade = ""
+	term("\n"+goal_array)
+	term('\n')
+
+	//Should order of the word arranged matter? - YES
+	chosen_words.forEach((val)=>{
+		val.split('').forEach((letter,val_idx)=>{
+			let isInGoal = goal_array.includes(letter); 
+			if(isInGoal && !done_letters.includes(letter)){ //The letter is in the goal word and it is not checked
+				colourWord(val,letter);
+				if(!done_letters.includes(letter) && !correct_words.includes(val)){// The letter is not checked and the word is not checked
+					correct_words.push(val)
+				}
+				done_letters.push(letter)
+			}
+		})
+
+	})
+	let ifArrayEqual = done_letters.equals(goal_array)
+	wordMade = done_letters.join('')
+	return [correct_words, wordMade, ifArrayEqual]
+}
+
+function colourWord(word, letter){
+	let idx = word.indexOf(letter)
+	let array = []
+	if(idx == 0){
+		array = [word.slice(0,idx+1), word.slice(idx+1,word.length)]
+	}else{
+		array = [word.slice(0,idx),word.slice(idx,idx+1), word.slice(idx+1,word.length)]
+	}
+	array.forEach((val)=>{
+		if(val === letter){
+			term("^y"+val+"^:")
+		}
+	})
+	console.log(array)
+}
+
+
+
+// Warn if overriding existing method
+if(Array.prototype.equals)
+    console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
+// attach the .equals method to Array's prototype to call it on any array
+Array.prototype.equals = function (array) {
+    // if the other array is a falsy value, return
+    if (!array)
+        return false;
+    // if the argument is the same array, we can be sure the contents are same as well
+    if(array === this)
+        return true;
+    // compare lengths - can save a lot of time 
+    if (this.length != array.length)
+        return false;
+
+    for (var i = 0, l=this.length; i < l; i++) {
+        // Check if we have nested arrays
+        if (this[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!this[i].equals(array[i]))
+                return false;       
+        }           
+        else if (this[i] != array[i]) { 
+            // Warning - two different object instances will never be equal: {x:20} != {x:20}
+            return false;   
+        }           
+    }       
+    return true;
+}
+// Hide method from for-in loops
+Object.defineProperty(Array.prototype, "equals", {enumerable: false});
