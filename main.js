@@ -86,7 +86,7 @@ function colourWord(word, letter){
 	}else{
 		array = [word.slice(0,idx),word.slice(idx,idx+1), word.slice(idx+1,word.length)]
 	}
-	array.forEch((val)=>{
+	array.forEach((val)=>{
 		if(val === letter){
 			term("^y"+val+"^:")
 		}
