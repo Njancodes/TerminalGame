@@ -1,11 +1,11 @@
 let term = require('terminal-kit').terminal;
 
-let word_inventory = ["keep","ykolk"]
+let word_inventory = ["rhubarb","prosody"]
 let chosen_words = []
 
 
 
-let goal_word = "key"
+let goal_word = "rhapsody"
 
 
 term("You inventory has the words: ^+" + word_inventory + "\n")
