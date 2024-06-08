@@ -1,6 +1,6 @@
 let term = require('terminal-kit').terminal;
 
-let word_inventory = ["^keep","ykolk"]
+let word_inventory = ["keep","ykolk"]
 let chosen_words = []
 
 
@@ -82,15 +82,19 @@ function colourWord(word, letter){
 	let idx = word.indexOf(letter)
 	let array = []
 	if(idx == 0){
-		array = [word.slice(0,idx+1), word.slice(idx+1,word.length)]
+		array = ["^y",word.slice(0,idx+1),"^:","^k", word.slice(idx+1,word.length),"^:"]
 	}else{
-		array = [word.slice(0,idx),word.slice(idx,idx+1), word.slice(idx+1,word.length)]
+		array = ["^k",word.slice(0,idx),"^:","^y",word.slice(idx,idx+1),"^:","^k",word.slice(idx+1,word.length),"^:"]
 	}
-	array.forEach((val)=>{
-		if(val === letter){
-			term("^y"+val+"^:")
-		}
-	})
+	// array.forEach((val)=>{
+	// 	if(val === letter){
+	// 		term("^y"+val+"^:")
+	// 	}
+	// })
+
+
+
+	term(array.join('')+"\n")
 }
 
 
