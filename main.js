@@ -64,9 +64,9 @@ function checkIftheWordsMakeWord(chosen_words, goal_word){
 		val.split('').forEach((letter,val_idx)=>{
 			let isInGoal = goal_array.includes(letter); 
 			if(isInGoal && !done_letters.includes(letter)){ //The letter is in the goal word and it is not checked
-				colourWord(val,letter);
+				let new_val = colourWord(val,letter);
 				if(!done_letters.includes(letter) && !correct_words.includes(val)){// The letter is not checked and the word is not checked
-					correct_words.push(val)
+					correct_words.push(new_val)
 				}
 				done_letters.push(letter)
 			}
@@ -86,12 +86,7 @@ function colourWord(word, letter){
 	}else{
 		array = [word.slice(0,idx),word.slice(idx,idx+1), word.slice(idx+1,word.length)]
 	}
-	array.forEach((val)=>{
-		if(val === letter){
-			term("^y"+val+"^:")
-		}
-	})
-	console.log(array)
+	return array.join('')
 }
 
 
