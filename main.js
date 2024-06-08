@@ -91,7 +91,6 @@ function colourWord(word, letter){
 			term("^y"+val+"^:")
 		}
 	})
-	console.log(array)
 }
 
 
